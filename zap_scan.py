@@ -3,7 +3,10 @@ import time
 from zapv2 import ZAPv2
 
 api_key = os.getenv('ZAP_API_KEY')  # Get the API key from the environment variable
-zap = ZAPv2(apikey=api_key, proxies={'http': 'http://127.0.0.1:8081', 'https': 'http://127.0.0.1:8081'})
+
+# Use 'host.docker.internal' to allow communication between Docker and the host
+zap_url = 'http://host.docker.internal:8081'
+zap = ZAPv2(apikey=api_key, proxies={'http': zap_url, 'https': zap_url})
 
 print("Ensuring ZAP is ready...")
 time.sleep(10)
@@ -11,7 +14,7 @@ time.sleep(10)
 print("Starting a new session...")
 zap.core.new_session(name='new_session', overwrite=True)
 
-target = 'http://127.0.0.1:5000'  # Replace with your actual target URL
+target = 'http://host.docker.internal:5000'  # Adjusted to allow Docker to access the target
 print(f'Starting scan on target {target}')
 zap.urlopen(target)  # Access the target URL
 
